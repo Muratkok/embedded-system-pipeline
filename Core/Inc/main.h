@@ -28,8 +28,15 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "cmsis_os.h"
+#include "cmsis_os2.h"
+#include "queue.h"
 #include "uart_port.h"
+#include "bsp_event.h"
+#include "mpu6050_driver.h"
+#include "bme280_driver.h"
 #include "string.h"
+#include "stdint.h"
 #include "stdio.h"
 #include "stdbool.h"
 /* Private includes ----------------------------------------------------------*/

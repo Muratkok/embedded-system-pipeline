@@ -5,12 +5,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../AppCore/Drivers/bme280_driver.c \
 ../AppCore/Drivers/mpu6050_driver.c 
 
 OBJS += \
+./AppCore/Drivers/bme280_driver.o \
 ./AppCore/Drivers/mpu6050_driver.o 
 
 C_DEPS += \
+./AppCore/Drivers/bme280_driver.d \
 ./AppCore/Drivers/mpu6050_driver.d 
 
 
@@ -21,7 +24,7 @@ AppCore/Drivers/%.o AppCore/Drivers/%.su AppCore/Drivers/%.cyclo: ../AppCore/Dri
 clean: clean-AppCore-2f-Drivers
 
 clean-AppCore-2f-Drivers:
-	-$(RM) ./AppCore/Drivers/mpu6050_driver.cyclo ./AppCore/Drivers/mpu6050_driver.d ./AppCore/Drivers/mpu6050_driver.o ./AppCore/Drivers/mpu6050_driver.su
+	-$(RM) ./AppCore/Drivers/bme280_driver.cyclo ./AppCore/Drivers/bme280_driver.d ./AppCore/Drivers/bme280_driver.o ./AppCore/Drivers/bme280_driver.su ./AppCore/Drivers/mpu6050_driver.cyclo ./AppCore/Drivers/mpu6050_driver.d ./AppCore/Drivers/mpu6050_driver.o ./AppCore/Drivers/mpu6050_driver.su
 
 .PHONY: clean-AppCore-2f-Drivers
 

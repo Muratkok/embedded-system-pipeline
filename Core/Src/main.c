@@ -19,7 +19,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "imu_talks.h"
 #include "uart_port.h"
+#include "i2c_port.h"
+#include "ring_buffer.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -45,14 +48,6 @@ I2C_HandleTypeDef hi2c1;
 IWDG_HandleTypeDef hiwdg;
 
 
-
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -66,8 +61,6 @@ static void MX_IWDG_Init(void);
 #endif
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
-
-void StartDefaultTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -116,6 +109,9 @@ int main(void)
   MX_DMA_Init();
   /* USER CODE BEGIN 2 */
   BSP_UART_Init();
+  BSP_I2C_Init();
+  IMU_Init();
+  RingBuffer_Init(&txRingBuffer);
   /* USER CODE END 2 */
 
   /* Init scheduler */

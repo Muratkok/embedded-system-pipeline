@@ -10,7 +10,7 @@
 #include "bsp_event.h"
 #include "cmsis_os.h"
 #include "queue.h"
-
+#include "ring_buffer.h"
 /* ================= CONFIG ================= */
 #define UART_TIMEOUT_MS 50
 
@@ -19,8 +19,11 @@ DMA_HandleTypeDef hdma_usart2_rx;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 uint8_t uart_rx_dma_buf[UART_RX_DMA_BUF_SIZE];
+uint8_t uart_received_data[UART_RX_DMA_BUF_SIZE];
+uint16_t uart_received_data_size = 0;
 uint8_t uart_tx_dma_buf[UART_TX_DMA_BUF_SIZE];
 uint16_t uart_tx_dma_buf_size = 0;
+
 QueueHandle_t uartRxQueue;
 TaskHandle_t bsp_uart_rx_task_handle = NULL;
 TaskHandle_t bsp_uart_tx_task_handle = NULL;
@@ -63,21 +66,21 @@ static void BSP_UART_RX_Task(void *arg)
 					 if(currentRxPos > last_rx_pos)
 					 {
 						 //processData(&huart2,&uart_rx_dma_buf[last_rx_pos], currentRxPos - last_rx_pos);
-						 memcpy(uart_tx_dma_buf,&uart_rx_dma_buf[last_rx_pos], currentRxPos - last_rx_pos);
-						 uart_tx_dma_buf_size = currentRxPos - last_rx_pos;
+						 memcpy(uart_received_data,&uart_rx_dma_buf[last_rx_pos], currentRxPos - last_rx_pos);
+						 uart_received_data_size = currentRxPos - last_rx_pos;
 					 }
 					 else
 					 {
 						 // circular wrap-around
 						 //processData(&huart2,&uart_rx_dma_buf[last_rx_pos], UART_RX_DMA_BUF_SIZE - last_rx_pos);
-						 memcpy(uart_tx_dma_buf,&uart_rx_dma_buf[last_rx_pos], UART_RX_DMA_BUF_SIZE - last_rx_pos);
+						 memcpy(uart_received_data,&uart_rx_dma_buf[last_rx_pos], UART_RX_DMA_BUF_SIZE - last_rx_pos);
 						 if(currentRxPos > 0)
 							 //processData(&huart2,&uart_rx_dma_buf[0], currentRxPos);
-							 memcpy(uart_tx_dma_buf,&uart_rx_dma_buf[0], currentRxPos);
-						 uart_tx_dma_buf_size = UART_RX_DMA_BUF_SIZE - last_rx_pos + currentRxPos;
+							 memcpy(uart_received_data,&uart_rx_dma_buf[0], currentRxPos);
+						 uart_received_data_size = UART_RX_DMA_BUF_SIZE - last_rx_pos + currentRxPos;
 					 }
 					 last_rx_pos = currentRxPos;
-					 osSemaphoreRelease(uartTxSem); // counting semaphore
+					/// osSemaphoreRelease(uartTxSem); // counting semaphore
 				 }
         	 }
          }
@@ -91,7 +94,11 @@ static void BSP_UART_TX_Task(void *arg)
      {
          if(osSemaphoreAcquire(uartTxSem, osWaitForever) == osOK)
          {
+        	uart_tx_dma_buf_size = UART_Send_DMA_FromRingBuffer(uart_tx_dma_buf);
+        	if(uart_tx_dma_buf_size>0)
+        	{
         	 processData(&huart2,uart_tx_dma_buf, uart_tx_dma_buf_size);
+        	}
          }
      }
 }
@@ -112,17 +119,16 @@ void UART_Timer_Init(void)
 /* ================= INIT ================= */
 void BSP_UART_Init(void)
 {
-    /* UART IDLE interrupt aktif et */
+    /* UART IDLE interrupt active */
     __HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 
-    /* RX DMA başlat */
+    /* RX DMA start */
     HAL_UART_Receive_DMA(&huart2, uart_rx_dma_buf, UART_RX_DMA_BUF_SIZE);
-    /* Queue oluştur (32 elemanlık, her eleman 1 byte) */
-   // uartRxQueue = xQueueCreate(32, sizeof(uint8_t));
+
     UART_InitCountingSemaphore();
-    // 5️⃣ Timer oluştur
+    // 5️⃣ Timer create
     UART_Timer_Init();
-    /* BSP UART Task oluştur */
+    /* BSP UART Tasks creat */
     bsp_uart_rx_task_handle = osThreadNew(BSP_UART_RX_Task, NULL, &BSPUARTTask_attributes);
     bsp_uart_tx_task_handle = osThreadNew(BSP_UART_TX_Task, NULL, &BSPUARTTask_attributes);
 

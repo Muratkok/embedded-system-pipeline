@@ -2,6 +2,7 @@
 "./AppCore/App/system_talks.o"
 "./AppCore/BSP/i2c_port.o"
 "./AppCore/BSP/uart_port.o"
+"./AppCore/Drivers/bme280_driver.o"
 "./AppCore/Drivers/mpu6050_driver.o"
 "./AppCore/Services/imu_fusion.o"
 "./AppCore/Services/nmea_formatter.o"
