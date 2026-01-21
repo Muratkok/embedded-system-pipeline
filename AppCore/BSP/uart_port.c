@@ -19,9 +19,13 @@ DMA_HandleTypeDef hdma_usart2_rx;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 uint8_t uart_rx_dma_buf[UART_RX_DMA_BUF_SIZE];
+uint8_t uart_tx_dma_buf[UART_TX_DMA_BUF_SIZE];
+uint16_t uart_tx_dma_buf_size = 0;
 QueueHandle_t uartRxQueue;
-TaskHandle_t bsp_uart_task_handle = NULL;
+TaskHandle_t bsp_uart_rx_task_handle = NULL;
+TaskHandle_t bsp_uart_tx_task_handle = NULL;
 osSemaphoreId_t uartRxSem;
+osSemaphoreId_t uartTxSem;
 osTimerId_t uartTimer;
 bool timeoutEnable;
 
@@ -39,7 +43,7 @@ void processData(UART_HandleTypeDef *huart,uint8_t *data, size_t len)
 }
 /* ================= BSP UART TASK ================= */
 uint16_t last_rx_pos = 0;
-static void BSP_UART_Task(void *arg)
+static void BSP_UART_RX_Task(void *arg)
 {
 
     for(;;)
@@ -58,27 +62,46 @@ static void BSP_UART_Task(void *arg)
 				 {
 					 if(currentRxPos > last_rx_pos)
 					 {
-						 processData(&huart2,&uart_rx_dma_buf[last_rx_pos], currentRxPos - last_rx_pos);
+						 //processData(&huart2,&uart_rx_dma_buf[last_rx_pos], currentRxPos - last_rx_pos);
+						 memcpy(uart_tx_dma_buf,&uart_rx_dma_buf[last_rx_pos], currentRxPos - last_rx_pos);
+						 uart_tx_dma_buf_size = currentRxPos - last_rx_pos;
 					 }
 					 else
 					 {
 						 // circular wrap-around
-						 processData(&huart2,&uart_rx_dma_buf[last_rx_pos], UART_RX_DMA_BUF_SIZE - last_rx_pos);
+						 //processData(&huart2,&uart_rx_dma_buf[last_rx_pos], UART_RX_DMA_BUF_SIZE - last_rx_pos);
+						 memcpy(uart_tx_dma_buf,&uart_rx_dma_buf[last_rx_pos], UART_RX_DMA_BUF_SIZE - last_rx_pos);
 						 if(currentRxPos > 0)
-							 processData(&huart2,&uart_rx_dma_buf[0], currentRxPos);
+							 //processData(&huart2,&uart_rx_dma_buf[0], currentRxPos);
+							 memcpy(uart_tx_dma_buf,&uart_rx_dma_buf[0], currentRxPos);
+						 uart_tx_dma_buf_size = UART_RX_DMA_BUF_SIZE - last_rx_pos + currentRxPos;
 					 }
 					 last_rx_pos = currentRxPos;
+					 osSemaphoreRelease(uartTxSem); // counting semaphore
 				 }
         	 }
          }
      }
 }
 
+static void BSP_UART_TX_Task(void *arg)
+{
+
+    for(;;)
+     {
+         if(osSemaphoreAcquire(uartTxSem, osWaitForever) == osOK)
+         {
+        	 processData(&huart2,uart_tx_dma_buf, uart_tx_dma_buf_size);
+         }
+     }
+}
 
 void UART_InitCountingSemaphore(void)
 {
-    const osSemaphoreAttr_t semAttr = { .name = "UART_RX_Sem" };
-    uartRxSem = osSemaphoreNew(10, 0, &semAttr); // max count 10, initial 0
+    const osSemaphoreAttr_t semRxAttr = { .name = "UART_RX_Sem" };
+    const osSemaphoreAttr_t semTxAttr = { .name = "UART_TX_Sem" };
+    uartRxSem = osSemaphoreNew(10, 0, &semRxAttr); // max count 10, initial 0
+    uartTxSem = osSemaphoreNew(10, 0, &semTxAttr); // max count 10, initial 0
 }
 extern void uartTimeoutCallback(void *argument);
 void UART_Timer_Init(void)
@@ -100,7 +123,8 @@ void BSP_UART_Init(void)
     // 5️⃣ Timer oluştur
     UART_Timer_Init();
     /* BSP UART Task oluştur */
-    bsp_uart_task_handle = osThreadNew(BSP_UART_Task, NULL, &BSPUARTTask_attributes);
+    bsp_uart_rx_task_handle = osThreadNew(BSP_UART_RX_Task, NULL, &BSPUARTTask_attributes);
+    bsp_uart_tx_task_handle = osThreadNew(BSP_UART_TX_Task, NULL, &BSPUARTTask_attributes);
 
 
 }

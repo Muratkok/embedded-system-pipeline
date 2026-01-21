@@ -9,6 +9,7 @@
 #define APPCORE_BSP_UART_PORT_H_
 
 #define UART_RX_DMA_BUF_SIZE 2048
+#define UART_TX_DMA_BUF_SIZE 2048
 
 void BSP_UART_Init(void);
 
