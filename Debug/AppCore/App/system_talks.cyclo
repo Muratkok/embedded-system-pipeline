@@ -1,0 +1,3 @@
+../AppCore/App/system_talks.c:24:6:SystemTaskNotify	3
+../AppCore/App/system_talks.c:39:13:SystemMonitorTask	2
+../AppCore/App/system_talks.c:56:6:SystemTalks_Init	1

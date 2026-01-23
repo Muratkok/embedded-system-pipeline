@@ -32,7 +32,6 @@ extern "C" {
 #include "cmsis_os2.h"
 #include "queue.h"
 #include "uart_port.h"
-#include "bsp_event.h"
 #include "mpu6050_driver.h"
 #include "bme280_driver.h"
 #include "string.h"
@@ -134,7 +133,7 @@ void Error_Handler(void);
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
-
+#define IWDG_ENABLE
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

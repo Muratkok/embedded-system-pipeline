@@ -20,6 +20,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "imu_talks.h"
+#include "system_talks.h"
 #include "uart_port.h"
 #include "i2c_port.h"
 #include "ring_buffer.h"
@@ -45,7 +46,6 @@
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
 
-IWDG_HandleTypeDef hiwdg;
 
 
 /* USER CODE BEGIN PV */
@@ -56,9 +56,6 @@ IWDG_HandleTypeDef hiwdg;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
-#ifdef IWDG_ENBALE
-static void MX_IWDG_Init(void);
-#endif
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 
@@ -100,8 +97,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
 
-#ifdef IWDG_ENBALE
-  MX_IWDG_Init();
+#ifdef IWDG_ENABLE
+  SystemTalks_Init();
 #endif
   MX_I2C1_Init();
   MX_USART2_UART_Init();
@@ -240,35 +237,6 @@ static void MX_I2C1_Init(void)
   /* USER CODE END I2C1_Init 2 */
 
 }
-#ifdef IWDG_ENBALE
-/**
-  * @brief IWDG Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_IWDG_Init(void)
-{
-
-  /* USER CODE BEGIN IWDG_Init 0 */
-
-  /* USER CODE END IWDG_Init 0 */
-
-  /* USER CODE BEGIN IWDG_Init 1 */
-
-  /* USER CODE END IWDG_Init 1 */
-  hiwdg.Instance = IWDG;
-  hiwdg.Init.Prescaler = IWDG_PRESCALER_4;
-  hiwdg.Init.Reload = 4095;
-  if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN IWDG_Init 2 */
-
-  /* USER CODE END IWDG_Init 2 */
-
-}
-#endif
 /**
   * @brief USART2 Initialization Function
   * @param None

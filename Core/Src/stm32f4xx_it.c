@@ -67,6 +67,7 @@ extern TaskHandle_t bsp_uart_task_handle;
 extern uint8_t uart_rx_dma_buf[UART_RX_DMA_BUF_SIZE];
 extern QueueHandle_t uartRxQueue;
 extern osSemaphoreId_t uartRxSem;
+extern osSemaphoreId_t uartTxSem;
 extern osTimerId_t uartTimer;
 extern bool timeoutEnable;
 /* USER CODE BEGIN EV */
@@ -200,36 +201,6 @@ void DMA1_Stream5_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream5_IRQn 0 */
 
-  /* USER CODE END DMA1_Stream5_IRQn 0 */
-   /* BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-
-
-    if (__HAL_DMA_GET_FLAG(&hdma_usart2_rx, DMA_FLAG_HTIF1_5))
-    {
-        __HAL_DMA_CLEAR_FLAG(&hdma_usart2_rx, DMA_FLAG_HTIF1_5);
-
-        // İlk yarıyı queue’ye gönder
-        for (uint16_t i = 0; i < UART_RX_DMA_BUF_SIZE/2; i++)
-        {
-            xQueueSendFromISR(uartRxQueue, &uart_rx_dma_buf[i], &xHigherPriorityTaskWoken);
-        }
-    }
-
-    if (__HAL_DMA_GET_FLAG(&hdma_usart2_rx, DMA_FLAG_TCIF1_5))
-    {
-        __HAL_DMA_CLEAR_FLAG(&hdma_usart2_rx, DMA_FLAG_TCIF1_5);
-
-        // İkinci yarıyı queue’ye gönder
-        for (uint16_t i = UART_RX_DMA_BUF_SIZE/2; i < UART_RX_DMA_BUF_SIZE; i++)
-        {
-            xQueueSendFromISR(uartRxQueue, &uart_rx_dma_buf[i], &xHigherPriorityTaskWoken);
-        }
-    }
-
-    HAL_DMA_IRQHandler(&hdma_usart2_rx);
-
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);*/
-
 	HAL_DMA_IRQHandler(&hdma_usart2_rx);
 
   /* USER CODE BEGIN DMA1_Stream5_IRQn 1 */
@@ -285,6 +256,15 @@ void USART2_IRQHandler(void)
         timeoutEnable = true;
     }
     HAL_UART_IRQHandler(&huart2);
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart == &huart2)
+	{
+		osSemaphoreRelease(uartTxSem);
+	}
+
 }
 /* USER CODE BEGIN 1 */
 

@@ -43,7 +43,6 @@ AppCore/Services/nmea_formatter.o: ../AppCore/Services/nmea_formatter.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/BSP/uart_port.h \
- C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/BSP/bsp_event.h \
  C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/Drivers/mpu6050_driver.h \
  C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/Drivers/bme280_driver.h \
  ../AppCore/Services/imu_fusion.h ../AppCore/Services/ring_buffer.h
@@ -92,7 +91,6 @@ AppCore/Services/nmea_formatter.o: ../AppCore/Services/nmea_formatter.c \
 ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/BSP/uart_port.h:
-C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/BSP/bsp_event.h:
 C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/Drivers/mpu6050_driver.h:
 C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/Drivers/bme280_driver.h:
 ../AppCore/Services/imu_fusion.h:

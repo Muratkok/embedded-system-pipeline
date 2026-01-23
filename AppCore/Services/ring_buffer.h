@@ -27,7 +27,7 @@ void RingBuffer_Init(RingBuffer *rb);
 uint16_t RingBuffer_Available(RingBuffer *rb);
 uint16_t RingBuffer_Space(RingBuffer *rb);
 uint8_t RingByte_Read(RingBuffer *rb, uint8_t *data);
-uint8_t RingBuffer_Write(RingBuffer *rb, uint8_t* data);
+void RingBuffer_Write(RingBuffer *rb, uint8_t* data);
 uint16_t UART_Send_DMA_FromRingBuffer(uint8_t* dmaBuf);
 extern RingBuffer txRingBuffer;
 

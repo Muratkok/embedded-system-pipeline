@@ -7,10 +7,10 @@
 
 #include "main.h"
 #include "uart_port.h"
-#include "bsp_event.h"
 #include "cmsis_os.h"
 #include "queue.h"
 #include "ring_buffer.h"
+#include "system_talks.h"
 /* ================= CONFIG ================= */
 #define UART_TIMEOUT_MS 50
 
@@ -51,13 +51,15 @@ static void BSP_UART_RX_Task(void *arg)
 
     for(;;)
      {
+#ifdef IWDG_ENABLE
+        SystemTaskNotify(TASK_COMM);
+#endif
          if(osSemaphoreAcquire(uartRxSem, osWaitForever) == osOK)
          {
         	 if(timeoutEnable)
         	 {
         		 osTimerStart(uartTimer, 50);  // timeout 50ms
         	 }
-             // DMA pointer ile veri uzunluğunu hesapla
         	 if(timeoutEnable == false)
         	 {
 				 size_t currentRxPos = UART_RX_DMA_BUF_SIZE - __HAL_DMA_GET_COUNTER(huart2.hdmarx);
@@ -65,17 +67,14 @@ static void BSP_UART_RX_Task(void *arg)
 				 {
 					 if(currentRxPos > last_rx_pos)
 					 {
-						 //processData(&huart2,&uart_rx_dma_buf[last_rx_pos], currentRxPos - last_rx_pos);
 						 memcpy(uart_received_data,&uart_rx_dma_buf[last_rx_pos], currentRxPos - last_rx_pos);
 						 uart_received_data_size = currentRxPos - last_rx_pos;
 					 }
 					 else
 					 {
 						 // circular wrap-around
-						 //processData(&huart2,&uart_rx_dma_buf[last_rx_pos], UART_RX_DMA_BUF_SIZE - last_rx_pos);
 						 memcpy(uart_received_data,&uart_rx_dma_buf[last_rx_pos], UART_RX_DMA_BUF_SIZE - last_rx_pos);
 						 if(currentRxPos > 0)
-							 //processData(&huart2,&uart_rx_dma_buf[0], currentRxPos);
 							 memcpy(uart_received_data,&uart_rx_dma_buf[0], currentRxPos);
 						 uart_received_data_size = UART_RX_DMA_BUF_SIZE - last_rx_pos + currentRxPos;
 					 }
@@ -92,6 +91,10 @@ static void BSP_UART_TX_Task(void *arg)
 
     for(;;)
      {
+    	TickType_t lastWake = xTaskGetTickCount();
+#ifdef IWDG_ENABLE
+        SystemTaskNotify(TASK_COMM);
+#endif
          if(osSemaphoreAcquire(uartTxSem, osWaitForever) == osOK)
          {
         	uart_tx_dma_buf_size = UART_Send_DMA_FromRingBuffer(uart_tx_dma_buf);
@@ -99,7 +102,9 @@ static void BSP_UART_TX_Task(void *arg)
         	{
         	 processData(&huart2,uart_tx_dma_buf, uart_tx_dma_buf_size);
         	}
+        	vTaskDelayUntil(&lastWake, pdMS_TO_TICKS(100));
          }
+
      }
 }
 

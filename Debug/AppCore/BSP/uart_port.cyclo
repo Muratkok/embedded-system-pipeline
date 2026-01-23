@@ -1,6 +1,6 @@
 ../AppCore/BSP/uart_port.c:42:6:processData	2
 ../AppCore/BSP/uart_port.c:49:13:BSP_UART_RX_Task	7
-../AppCore/BSP/uart_port.c:90:13:BSP_UART_TX_Task	3
-../AppCore/BSP/uart_port.c:106:6:UART_InitCountingSemaphore	1
-../AppCore/BSP/uart_port.c:114:6:UART_Timer_Init	1
-../AppCore/BSP/uart_port.c:120:6:BSP_UART_Init	1
+../AppCore/BSP/uart_port.c:89:13:BSP_UART_TX_Task	3
+../AppCore/BSP/uart_port.c:111:6:UART_InitCountingSemaphore	1
+../AppCore/BSP/uart_port.c:119:6:UART_Timer_Init	1
+../AppCore/BSP/uart_port.c:125:6:BSP_UART_Init	1

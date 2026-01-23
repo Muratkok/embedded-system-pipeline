@@ -1,2 +1,2 @@
-../AppCore/App/imu_talks.c:24:6:IMU_Task	72	static
+../AppCore/App/imu_talks.c:26:6:IMU_Task	152	static
 ../AppCore/App/imu_talks.c:57:6:IMU_Init	8	static

@@ -6,16 +6,19 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../AppCore/Services/imu_fusion.c \
+../AppCore/Services/iwdg_service.c \
 ../AppCore/Services/nmea_formatter.c \
 ../AppCore/Services/ring_buffer.c 
 
 OBJS += \
 ./AppCore/Services/imu_fusion.o \
+./AppCore/Services/iwdg_service.o \
 ./AppCore/Services/nmea_formatter.o \
 ./AppCore/Services/ring_buffer.o 
 
 C_DEPS += \
 ./AppCore/Services/imu_fusion.d \
+./AppCore/Services/iwdg_service.d \
 ./AppCore/Services/nmea_formatter.d \
 ./AppCore/Services/ring_buffer.d 
 
@@ -27,7 +30,7 @@ AppCore/Services/%.o AppCore/Services/%.su AppCore/Services/%.cyclo: ../AppCore/
 clean: clean-AppCore-2f-Services
 
 clean-AppCore-2f-Services:
-	-$(RM) ./AppCore/Services/imu_fusion.cyclo ./AppCore/Services/imu_fusion.d ./AppCore/Services/imu_fusion.o ./AppCore/Services/imu_fusion.su ./AppCore/Services/nmea_formatter.cyclo ./AppCore/Services/nmea_formatter.d ./AppCore/Services/nmea_formatter.o ./AppCore/Services/nmea_formatter.su ./AppCore/Services/ring_buffer.cyclo ./AppCore/Services/ring_buffer.d ./AppCore/Services/ring_buffer.o ./AppCore/Services/ring_buffer.su
+	-$(RM) ./AppCore/Services/imu_fusion.cyclo ./AppCore/Services/imu_fusion.d ./AppCore/Services/imu_fusion.o ./AppCore/Services/imu_fusion.su ./AppCore/Services/iwdg_service.cyclo ./AppCore/Services/iwdg_service.d ./AppCore/Services/iwdg_service.o ./AppCore/Services/iwdg_service.su ./AppCore/Services/nmea_formatter.cyclo ./AppCore/Services/nmea_formatter.d ./AppCore/Services/nmea_formatter.o ./AppCore/Services/nmea_formatter.su ./AppCore/Services/ring_buffer.cyclo ./AppCore/Services/ring_buffer.d ./AppCore/Services/ring_buffer.o ./AppCore/Services/ring_buffer.su
 
 .PHONY: clean-AppCore-2f-Services
 

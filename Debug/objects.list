@@ -5,6 +5,7 @@
 "./AppCore/Drivers/bme280_driver.o"
 "./AppCore/Drivers/mpu6050_driver.o"
 "./AppCore/Services/imu_fusion.o"
+"./AppCore/Services/iwdg_service.o"
 "./AppCore/Services/nmea_formatter.o"
 "./AppCore/Services/ring_buffer.o"
 "./Core/Src/freertos.o"

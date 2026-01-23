@@ -1,0 +1,2 @@
+../AppCore/Services/iwdg_service.c:11:6:WatchDogInit	8	static
+../AppCore/Services/iwdg_service.c:21:6:FeedWatchdog	8	static
