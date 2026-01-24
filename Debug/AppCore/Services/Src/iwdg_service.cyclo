@@ -1,0 +1,2 @@
+../AppCore/Services/Src/iwdg_service.c:11:6:WatchDogInit	2
+../AppCore/Services/Src/iwdg_service.c:21:6:FeedWatchdog	1

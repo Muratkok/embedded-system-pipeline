@@ -1,6 +1,0 @@
-../AppCore/BSP/uart_port.c:42:6:processData	24	static
-../AppCore/BSP/uart_port.c:49:13:BSP_UART_RX_Task	24	static
-../AppCore/BSP/uart_port.c:89:13:BSP_UART_TX_Task	24	static
-../AppCore/BSP/uart_port.c:111:6:UART_InitCountingSemaphore	40	static
-../AppCore/BSP/uart_port.c:119:6:UART_Timer_Init	8	static
-../AppCore/BSP/uart_port.c:125:6:BSP_UART_Init	8	static

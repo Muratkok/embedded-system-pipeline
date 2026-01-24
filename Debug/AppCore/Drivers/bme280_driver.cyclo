@@ -1,3 +1,0 @@
-../AppCore/Drivers/bme280_driver.c:26:13:BME280_ReadCalibration	1
-../AppCore/Drivers/bme280_driver.c:59:6:BME280_Init	1
-../AppCore/Drivers/bme280_driver.c:85:6:BME280_Read	1

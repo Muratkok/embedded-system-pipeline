@@ -1,0 +1,2 @@
+../AppCore/BSP/src/uart_port.c:23:6:processData	24	static
+../AppCore/BSP/src/uart_port.c:30:6:BSP_UART_Init	8	static

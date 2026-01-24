@@ -1,3 +1,0 @@
-../AppCore/App/system_talks.c:24:6:SystemTaskNotify	16	static
-../AppCore/App/system_talks.c:39:13:SystemMonitorTask	32	static
-../AppCore/App/system_talks.c:56:6:SystemTalks_Init	48	static

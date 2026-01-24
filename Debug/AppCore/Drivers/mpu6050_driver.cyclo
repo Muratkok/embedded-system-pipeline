@@ -1,2 +1,0 @@
-../AppCore/Drivers/mpu6050_driver.c:12:6:MPU6050_Init	1
-../AppCore/Drivers/mpu6050_driver.c:30:6:MPU6050_Read	1

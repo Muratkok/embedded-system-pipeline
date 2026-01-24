@@ -21,9 +21,7 @@
 #include "cmsis_os.h"
 #include "imu_talks.h"
 #include "system_talks.h"
-#include "uart_port.h"
-#include "i2c_port.h"
-#include "ring_buffer.h"
+#include "com_talks.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -96,19 +94,16 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-
-#ifdef IWDG_ENABLE
-  SystemTalks_Init();
-#endif
   MX_I2C1_Init();
   MX_USART2_UART_Init();
   HAL_UART_MspInit(&huart2);
   MX_DMA_Init();
   /* USER CODE BEGIN 2 */
-  BSP_UART_Init();
-  BSP_I2C_Init();
-  IMU_Init();
-  RingBuffer_Init(&txRingBuffer);
+  Com_Talks_Init();
+  IMU_Talks_Init();
+#ifdef IWDG_ENABLE
+  SystemTalks_Init();
+#endif
   /* USER CODE END 2 */
 
   /* Init scheduler */

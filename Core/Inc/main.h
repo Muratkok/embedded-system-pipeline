@@ -33,7 +33,6 @@ extern "C" {
 #include "queue.h"
 #include "uart_port.h"
 #include "mpu6050_driver.h"
-#include "bme280_driver.h"
 #include "string.h"
 #include "stdint.h"
 #include "stdio.h"

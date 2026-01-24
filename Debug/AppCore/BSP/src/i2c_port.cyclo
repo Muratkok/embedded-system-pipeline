@@ -1,0 +1,2 @@
+../AppCore/BSP/src/i2c_port.c:14:6:BSP_I2C_Init	1
+../AppCore/BSP/src/i2c_port.c:19:6:BSP_I2C_Read	1
