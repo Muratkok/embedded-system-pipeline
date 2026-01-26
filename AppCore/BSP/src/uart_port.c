@@ -6,11 +6,8 @@
  */
 
 #include "main.h"
-#include "uart_port.h"
-#include "cmsis_os.h"
-#include "queue.h"
-#include "ring_buffer.h"
-#include "system_talks.h"
+
+#include "com_talks.h"
 /* ================= CONFIG ================= */
 #define UART_TIMEOUT_MS 50
 
@@ -18,7 +15,6 @@ UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_rx;
 DMA_HandleTypeDef hdma_usart2_tx;
 
-extern uint8_t uart_rx_dma_buf[UART_RX_DMA_BUF_SIZE];
 
 void processData(UART_HandleTypeDef *huart,uint8_t *data, size_t len)
 {

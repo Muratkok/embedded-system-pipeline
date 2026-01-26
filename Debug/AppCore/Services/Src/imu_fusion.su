@@ -1,3 +1,3 @@
-../AppCore/Services/Src/imu_fusion.c:13:6:IMU_ComputeRollPitch	40	static
-../AppCore/Services/Src/imu_fusion.c:26:6:IMU_Kalman_Init	16	static
-../AppCore/Services/Src/imu_fusion.c:31:7:IMU_Kalman_Update	40	static
+../AppCore/Services/Src/imu_fusion.c:13:6:IMU_ComputeRollPitchHeading	40	static
+../AppCore/Services/Src/imu_fusion.c:30:6:IMU_Kalman_Init	16	static
+../AppCore/Services/Src/imu_fusion.c:35:7:IMU_Kalman_Update	40	static

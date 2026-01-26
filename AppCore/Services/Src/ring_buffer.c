@@ -11,12 +11,15 @@
 #include "semphr.h"
 
 SemaphoreHandle_t ringTxBufWriteMutex;
+SemaphoreHandle_t ringTxBufReadMutex;
 RingBuffer txRingBuffer;
+extern volatile bool huart2IsBusy;
 void RingBuffer_Init(RingBuffer *rb) {
 	 rb->head = 0;
 	 rb->tail = 0;
 	 memset(rb->buf, 0, UART_BUF_SIZE);
 	 ringTxBufWriteMutex = xSemaphoreCreateMutex();
+	 ringTxBufReadMutex = xSemaphoreCreateMutex();
 }
 
 static uint16_t RingBuffer_Available(RingBuffer *rb) {
@@ -35,6 +38,7 @@ static uint8_t RingByte_Write(RingBuffer *rb, uint8_t data) {
 }
 void RingBuffer_Write(RingBuffer *rb, uint8_t* data)
 {
+	if(huart2IsBusy) return;
     xSemaphoreTake(ringTxBufWriteMutex, portMAX_DELAY);
 	uint8_t writtenData = 0;
 	while(*data)
@@ -59,7 +63,7 @@ uint16_t UART_Send_DMA_FromRingBuffer(uint8_t* dmaBuf)
 {
 	uint16_t dmaBufSize = 0;
     if(HAL_UART_GetState(&huart2) == HAL_UART_STATE_BUSY_TX) return 0;
-
+    xSemaphoreTake(ringTxBufReadMutex, portMAX_DELAY);
     if(RingBuffer_Available(&txRingBuffer) == 0) return 0;
 
     uint16_t i = 0;
@@ -68,6 +72,7 @@ uint16_t UART_Send_DMA_FromRingBuffer(uint8_t* dmaBuf)
         i++;
     }
     dmaBufSize = i;
+    xSemaphoreGive(ringTxBufReadMutex);
     return dmaBufSize;
 }
 

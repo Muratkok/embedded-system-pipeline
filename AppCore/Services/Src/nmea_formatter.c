@@ -10,7 +10,7 @@
 
 extern UART_HandleTypeDef huart2;
 extern osSemaphoreId_t uartTxSem;
-uint8_t nmea_buffer[128];
+char nmea_buffer[128];
 
 // XOR checksum
 static uint8_t NMEA_Checksum(const char *s) {
@@ -21,10 +21,13 @@ static uint8_t NMEA_Checksum(const char *s) {
     return cs;
 }
 
-void IMU_Send_NMEA(char *payload)
+uint32_t Convert_Data_NMEA_Format(char **payload)
 {
-    uint8_t cs = NMEA_Checksum(payload);
-    sprintf((char*)nmea_buffer, "$%s*%02X\r\n", payload, cs);
-    RingBuffer_Write(&txRingBuffer,nmea_buffer);
-    osSemaphoreRelease(uartTxSem);
+	uint32_t payloadSize;
+    uint8_t cs = NMEA_Checksum(*payload);
+    memset(nmea_buffer,0,sizeof(nmea_buffer));
+    sprintf(nmea_buffer, "$%s*%02X\r\n", *payload, cs);
+    *payload = nmea_buffer;
+    payloadSize = strlen(nmea_buffer);
+    return  payloadSize;
 }

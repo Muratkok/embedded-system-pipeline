@@ -1,2 +1,2 @@
 ../AppCore/Services/Src/nmea_formatter.c:16:16:NMEA_Checksum	2
-../AppCore/Services/Src/nmea_formatter.c:24:6:IMU_Send_NMEA	1
+../AppCore/Services/Src/nmea_formatter.c:24:10:Convert_Data_NMEA_Format	1

@@ -10,5 +10,6 @@
 
 
 extern void Com_Talks_Init(void);
+extern uint8_t uart_rx_dma_buf[UART_RX_DMA_BUF_SIZE];
 
 #endif /* APP_COM_TALKS_H_ */

@@ -16,6 +16,7 @@ typedef struct
 {
     float roll;
     float pitch;
+    float heading;
 } IMU_Attitude_t;
 
 typedef struct {
@@ -24,7 +25,7 @@ typedef struct {
 } KalmanFilter;
 #pragma pack(pop)
 
-void  IMU_ComputeRollPitch(const MPU6050_Data_t *raw,IMU_Attitude_t *att);
+void  IMU_ComputeRollPitchHeading(const MPU6050_Data_t *raw,IMU_Attitude_t *att);
 void  IMU_Kalman_Init(KalmanFilter *kf, float initAngle);
 float IMU_Kalman_Update(KalmanFilter *kf, float accAngle, float gyroRate, float dt, float Q, float R);
 

@@ -68,6 +68,7 @@ extern uint8_t uart_rx_dma_buf[UART_RX_DMA_BUF_SIZE];
 extern QueueHandle_t uartRxQueue;
 extern osSemaphoreId_t uartRxSem;
 extern osSemaphoreId_t uartTxSem;
+extern osSemaphoreId_t uartBusySem;
 extern osTimerId_t uartTimer;
 extern bool timeoutEnable;
 /* USER CODE BEGIN EV */
@@ -257,12 +258,13 @@ void USART2_IRQHandler(void)
     }
     HAL_UART_IRQHandler(&huart2);
 }
-
+extern bool huart2IsBusy;
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if(huart == &huart2)
 	{
-		osSemaphoreRelease(uartTxSem);
+		osSemaphoreRelease(uartBusySem);
+		//osSemaphoreRelease(uartTxSem);
 	}
 
 }

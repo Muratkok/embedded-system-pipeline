@@ -10,15 +10,19 @@
 #define ACC_LSB_2G 16384.0f
 #define DEG_PER_RAD 57.2957795f
 
-void IMU_ComputeRollPitch(const MPU6050_Data_t *raw,
+void IMU_ComputeRollPitchHeading(const MPU6050_Data_t *raw,
                           IMU_Attitude_t *att)
 {
     float ax = raw->ax / ACC_LSB_2G;
     float ay = raw->ay / ACC_LSB_2G;
     float az = raw->az / ACC_LSB_2G;
 
-    att->roll  = atan2f(ay, az) * DEG_PER_RAD;
+
+
+
+    att->roll  = atan2f(ay, az)  * DEG_PER_RAD;
     att->pitch = atan2f(-ax, sqrtf(ay*ay + az*az)) * DEG_PER_RAD;
+    att->heading = atan2f(ay, ax) * DEG_PER_RAD;
 }
 
 

@@ -8,12 +8,13 @@
 #include "uart_port.h"
 #include "system_talks.h"
 #include "ring_buffer.h"
-
+#include "nmea_formatter.h"
 QueueHandle_t uartRxQueue;
 TaskHandle_t bsp_uart_rx_task_handle = NULL;
 TaskHandle_t bsp_uart_tx_task_handle = NULL;
 osSemaphoreId_t uartRxSem;
 osSemaphoreId_t uartTxSem;
+osSemaphoreId_t uartBusySem;
 osTimerId_t uartTimer;
 
 bool timeoutEnable;
@@ -22,7 +23,7 @@ uint8_t uart_received_data[UART_RX_DMA_BUF_SIZE];
 uint16_t uart_received_data_size = 0;
 uint8_t uart_tx_dma_buf[UART_TX_DMA_BUF_SIZE];
 uint16_t uart_tx_dma_buf_size = 0;
-
+volatile bool huart2IsBusy = false;
 extern void uartTimeoutCallback(void *argument);
 const osThreadAttr_t BSPUARTTask_attributes = {
   .name = "bsp_uart",
@@ -83,12 +84,15 @@ static void ComTaskTx(void *argument)
 #endif
          if(osSemaphoreAcquire(uartTxSem, osWaitForever) == osOK)
          {
+        	memset(uart_tx_dma_buf,0,sizeof(uart_tx_dma_buf));
         	uart_tx_dma_buf_size = UART_Send_DMA_FromRingBuffer(uart_tx_dma_buf);
         	if(uart_tx_dma_buf_size>0)
         	{
-        	 processData(&huart2,uart_tx_dma_buf, uart_tx_dma_buf_size);
+        		char *ptr = (char*)uart_tx_dma_buf;
+        		uart_tx_dma_buf_size = Convert_Data_NMEA_Format(&ptr);
+				processData(&huart2,(uint8_t*)ptr, uart_tx_dma_buf_size);
         	}
-        	vTaskDelayUntil(&lastWake, pdMS_TO_TICKS(100));
+        	vTaskDelayUntil(&lastWake, pdMS_TO_TICKS(10));
          }
 
      }
@@ -101,6 +105,7 @@ static void UART_InitCountingSemaphore(void)
     const osSemaphoreAttr_t semTxAttr = { .name = "UART_TX_Sem" };
     uartRxSem = osSemaphoreNew(10, 0, &semRxAttr); // max count 10, initial 0
     uartTxSem = osSemaphoreNew(10, 0, &semTxAttr); // max count 10, initial 0
+    uartBusySem = osSemaphoreNew(10, 0, &semTxAttr); // max count 10, initial 0
 }
 
 static void UART_Timer_Init(void)

@@ -9,5 +9,5 @@
 #define SERVICES_INC_NMEA_FORMATTER_H_
 
 
-extern void IMU_Send_NMEA(char *payload);
+extern uint32_t Convert_Data_NMEA_Format(char **payload);
 #endif /* SERVICES_INC_NMEA_FORMATTER_H_ */
