@@ -1,5 +1,5 @@
-../AppCore/App/src/com_talks.c:41:13:ComTaskRx	2
-../AppCore/App/src/com_talks.c:58:13:ComTaskTx	3
-../AppCore/App/src/com_talks.c:84:13:UART_InitCountingSemaphore	1
-../AppCore/App/src/com_talks.c:91:13:UART_Timer_Init	1
-../AppCore/App/src/com_talks.c:96:6:Com_Talks_Init	1
+../AppCore/App/src/com_talks.c:40:13:ComTaskRx	2
+../AppCore/App/src/com_talks.c:57:13:ComTaskTx	3
+../AppCore/App/src/com_talks.c:83:13:UART_InitCountingSemaphore	1
+../AppCore/App/src/com_talks.c:90:13:UART_Timer_Init	1
+../AppCore/App/src/com_talks.c:95:6:Com_Talks_Init	1

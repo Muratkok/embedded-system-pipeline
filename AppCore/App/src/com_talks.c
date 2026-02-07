@@ -36,7 +36,6 @@ const osThreadAttr_t BSPUARTTask_attributes = {
   .priority = (osPriority_t) osPriorityHigh,
 };
 
-/* ================= BSP UART TASK ================= */
 uint16_t last_rx_pos = 0;
 static void ComTaskRx(void *argument)
 {

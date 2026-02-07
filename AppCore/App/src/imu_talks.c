@@ -28,7 +28,7 @@ void IMU_Task(void *arg)
 {
     MPU6050_Data_t imuRaw;
     IMU_Attitude_t attitude;
-    static bool firstStart = false;
+    static bool firstStart = true;
 	KalmanFilter rollKalman, pitchKalman,headingKalman;
 	IMU_Kalman_Init(&rollKalman, 0.0f);
 	IMU_Kalman_Init(&pitchKalman, 0.0f);
@@ -42,9 +42,9 @@ void IMU_Task(void *arg)
 
     for (;;)
     {
-    	 if(firstStart == false || osSemaphoreAcquire(uartBusySem, osWaitForever) == osOK)
+    	 if(firstStart || osSemaphoreAcquire(uartBusySem, osWaitForever) == osOK)
     	 {
-    		 firstStart = true;
+    		firstStart = false;
 			char payload[64] = {0};
 			//MPU6050_Read(&hi2c1, &imuRaw);
 			BSP_I2C_Read(&imuRaw);

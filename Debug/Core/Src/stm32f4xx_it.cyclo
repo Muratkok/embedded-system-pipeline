@@ -10,6 +10,6 @@
 ../Core/Src/stm32f4xx_it.c:218:6:DMA1_Stream6_IRQHandler	1
 ../Core/Src/stm32f4xx_it.c:233:6:uartTimeoutCallback	1
 ../Core/Src/stm32f4xx_it.c:239:6:HAL_UART_RxCpltCallback	3
-../Core/Src/stm32f4xx_it.c:261:6:HAL_UART_RxHalfCpltCallback	3
-../Core/Src/stm32f4xx_it.c:286:6:USART2_IRQHandler	6
-../Core/Src/stm32f4xx_it.c:339:6:HAL_UART_TxCpltCallback	2
+../Core/Src/stm32f4xx_it.c:260:6:HAL_UART_RxHalfCpltCallback	3
+../Core/Src/stm32f4xx_it.c:276:6:USART2_IRQHandler	6
+../Core/Src/stm32f4xx_it.c:328:6:HAL_UART_TxCpltCallback	2
