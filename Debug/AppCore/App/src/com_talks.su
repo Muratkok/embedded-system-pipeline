@@ -1,5 +1,5 @@
-../AppCore/App/src/com_talks.c:36:13:ComTaskRx	24	static
-../AppCore/App/src/com_talks.c:76:13:ComTaskTx	24	static
-../AppCore/App/src/com_talks.c:102:13:UART_InitCountingSemaphore	40	static
-../AppCore/App/src/com_talks.c:111:13:UART_Timer_Init	8	static
-../AppCore/App/src/com_talks.c:116:6:Com_Talks_Init	8	static
+../AppCore/App/src/com_talks.c:41:13:ComTaskRx	16	static
+../AppCore/App/src/com_talks.c:58:13:ComTaskTx	24	static
+../AppCore/App/src/com_talks.c:84:13:UART_InitCountingSemaphore	24	static
+../AppCore/App/src/com_talks.c:91:13:UART_Timer_Init	8	static
+../AppCore/App/src/com_talks.c:96:6:Com_Talks_Init	8	static

@@ -25,6 +25,7 @@
 #include "queue.h"
 #include "cmsis_os2.h"
 #include "stdbool.h"
+#include "com_talks.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -65,11 +66,12 @@ extern DMA_HandleTypeDef hdma_usart2_tx;
 extern UART_HandleTypeDef huart2;
 extern TaskHandle_t bsp_uart_task_handle;
 extern uint8_t uart_rx_dma_buf[UART_RX_DMA_BUF_SIZE];
-extern QueueHandle_t uartRxQueue;
+//extern QueueHandle_t uartRxQueue;
 extern osSemaphoreId_t uartRxSem;
 extern osSemaphoreId_t uartTxSem;
 extern osSemaphoreId_t uartBusySem;
 extern osTimerId_t uartTimer;
+//extern osMessageQueueId_t uartRxQueue;
 extern bool timeoutEnable;
 /* USER CODE BEGIN EV */
 
@@ -104,6 +106,7 @@ void HardFault_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+	  NVIC_SystemReset();
     /* USER CODE END W1_HardFault_IRQn 0 */
   }
 }
@@ -231,13 +234,26 @@ void uartTimeoutCallback(void *argument)
 {
     // IDLE mantığı burada tetikleniyor
 	timeoutEnable = false;
-    osSemaphoreRelease(uartRxSem);
 }
+volatile uint16_t last_pos = 0;
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     if(huart == &huart2)
     {
-        osSemaphoreRelease(uartRxSem); // counting semaphore
+        //uart_msg_t msg;
+
+        //msg.len = UART_CHUNK_SIZE;
+        //memcpy(msg.data,uart_rx_dma_buf + UART_CHUNK_SIZE,UART_CHUNK_SIZE);
+    	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        xStreamBufferSendFromISR(
+            uartRxStream,
+            &uart_rx_dma_buf[0]+UART_RX_DMA_BUF_SIZE/2,
+			UART_RX_DMA_BUF_SIZE/2,
+            &xHigherPriorityTaskWoken
+        );
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        last_pos = 0;
+
     }
 }
 
@@ -245,19 +261,69 @@ void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
 {
     if(huart == &huart2)
     {
-        osSemaphoreRelease(uartRxSem);// counting semaphore
+        // normal
+    	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        xStreamBufferSendFromISR(
+            uartRxStream,
+            &uart_rx_dma_buf[0],
+			UART_RX_DMA_BUF_SIZE/2,
+            &xHigherPriorityTaskWoken
+        );
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        last_pos = UART_RX_DMA_BUF_SIZE/2;
     }
 }
 void USART2_IRQHandler(void)
 {
-    if(__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE))
+    if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE))
     {
         __HAL_UART_CLEAR_IDLEFLAG(&huart2);
-        osSemaphoreRelease(uartRxSem);// counting semaphore
-        timeoutEnable = true;
+
+       // static uint16_t last_pos = 0;
+        uint16_t curr_pos = UART_RX_DMA_BUF_SIZE - __HAL_DMA_GET_COUNTER(huart2.hdmarx);
+
+        if (curr_pos != last_pos)
+        {
+            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+            if (curr_pos > last_pos)
+            {
+                // normal
+                xStreamBufferSendFromISR(
+                    uartRxStream,
+                    &uart_rx_dma_buf[last_pos],
+                    curr_pos - last_pos,
+                    &xHigherPriorityTaskWoken
+                );
+            }
+            else
+            {
+                // wrap
+                xStreamBufferSendFromISR(
+                    uartRxStream,
+                    &uart_rx_dma_buf[last_pos],
+                    UART_RX_DMA_BUF_SIZE - last_pos,
+                    &xHigherPriorityTaskWoken
+                );
+
+                if (curr_pos > 0)
+                {
+                    xStreamBufferSendFromISR(
+                        uartRxStream,
+                        uart_rx_dma_buf,
+                        curr_pos,
+                        &xHigherPriorityTaskWoken
+                    );
+                }
+            }
+            last_pos = curr_pos;
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        }
     }
+
     HAL_UART_IRQHandler(&huart2);
 }
+
 extern bool huart2IsBusy;
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {

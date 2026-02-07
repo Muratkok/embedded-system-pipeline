@@ -16,10 +16,12 @@ DMA_HandleTypeDef hdma_usart2_rx;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 
-void processData(UART_HandleTypeDef *huart,uint8_t *data, size_t len)
+static uint8_t txBuf[2048];
+
+void processData(UART_HandleTypeDef *huart, uint8_t *data, size_t len)
 {
-    if(len == 0) return;
-    HAL_UART_Transmit_DMA(huart, data, len);
+    memcpy(txBuf, data, len);
+    HAL_UART_Transmit_DMA(huart, txBuf, len);
 }
 
 /* ================= INIT ================= */

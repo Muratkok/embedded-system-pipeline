@@ -12,7 +12,7 @@
 #include "semphr.h"
 #define EVENTFLAG_IMU (1U << 0)
 #define EVENTFLAG_COMM (1U << 1)
-
+//#define UART_CHUNK_SIZE 512
 typedef enum
 {
 	TASK_IMU,

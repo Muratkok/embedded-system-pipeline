@@ -49,7 +49,9 @@ AppCore/App/src/com_talks.o: ../AppCore/App/src/com_talks.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/Services/Inc/ring_buffer.h \
- C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/Services/Inc/nmea_formatter.h
+ C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/Services/Inc/nmea_formatter.h \
+ C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/App/Inc/com_talks.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/stream_buffer.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -102,3 +104,5 @@ C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline
 ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
 C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/Services/Inc/ring_buffer.h:
 C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/Services/Inc/nmea_formatter.h:
+C:/Users/murad/Desktop/CubeMx_Project/freertos_projects/embedded-system-pipeline/AppCore/App/Inc/com_talks.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/stream_buffer.h:

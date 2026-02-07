@@ -10,7 +10,7 @@
 
 
 
-#define UART_BUF_SIZE 1024
+#define UART_BUF_SIZE 3000
 
 #pragma pack(push,1)
 

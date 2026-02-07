@@ -8,7 +8,7 @@
 #ifndef APPCORE_BSP_UART_PORT_H_
 #define APPCORE_BSP_UART_PORT_H_
 
-#define UART_RX_DMA_BUF_SIZE 2048
+#define UART_RX_DMA_BUF_SIZE 1024
 #define UART_TX_DMA_BUF_SIZE 2048
 
 extern UART_HandleTypeDef huart2;

@@ -9,20 +9,25 @@
 #include "system_talks.h"
 #include "ring_buffer.h"
 #include "nmea_formatter.h"
-QueueHandle_t uartRxQueue;
+#include "com_talks.h"
+
+//QueueHandle_t uartRxQueue;
 TaskHandle_t bsp_uart_rx_task_handle = NULL;
 TaskHandle_t bsp_uart_tx_task_handle = NULL;
-osSemaphoreId_t uartRxSem;
 osSemaphoreId_t uartTxSem;
 osSemaphoreId_t uartBusySem;
 osTimerId_t uartTimer;
+StreamBufferHandle_t uartRxStream;
+
 
 bool timeoutEnable;
-uint8_t uart_rx_dma_buf[UART_RX_DMA_BUF_SIZE];
+__attribute__((aligned(32))) uint8_t uart_rx_dma_buf[UART_RX_DMA_BUF_SIZE];
 uint8_t uart_received_data[UART_RX_DMA_BUF_SIZE];
 uint16_t uart_received_data_size = 0;
 uint8_t uart_tx_dma_buf[UART_TX_DMA_BUF_SIZE];
 uint16_t uart_tx_dma_buf_size = 0;
+
+uart_msg_t receivedMessageQueue;
 volatile bool huart2IsBusy = false;
 extern void uartTimeoutCallback(void *argument);
 const osThreadAttr_t BSPUARTTask_attributes = {
@@ -35,41 +40,18 @@ const osThreadAttr_t BSPUARTTask_attributes = {
 uint16_t last_rx_pos = 0;
 static void ComTaskRx(void *argument)
 {
-
     for(;;)
      {
 #ifdef IWDG_ENABLE
         SystemTaskNotify(TASK_COMM);
 #endif
-         if(osSemaphoreAcquire(uartRxSem, osWaitForever) == osOK)
-         {
-        	 if(timeoutEnable)
-        	 {
-        		 osTimerStart(uartTimer, 50);  // timeout 50ms
-        	 }
-        	 if(timeoutEnable == false)
-        	 {
-				 size_t currentRxPos = UART_RX_DMA_BUF_SIZE - __HAL_DMA_GET_COUNTER(huart2.hdmarx);
-				 if(currentRxPos != last_rx_pos)
-				 {
-					 if(currentRxPos > last_rx_pos)
-					 {
-						 memcpy(uart_received_data,&uart_rx_dma_buf[last_rx_pos], currentRxPos - last_rx_pos);
-						 uart_received_data_size = currentRxPos - last_rx_pos;
-					 }
-					 else
-					 {
-						 // circular wrap-around
-						 memcpy(uart_received_data,&uart_rx_dma_buf[last_rx_pos], UART_RX_DMA_BUF_SIZE - last_rx_pos);
-						 if(currentRxPos > 0)
-							 memcpy(uart_received_data,&uart_rx_dma_buf[0], currentRxPos);
-						 uart_received_data_size = UART_RX_DMA_BUF_SIZE - last_rx_pos + currentRxPos;
-					 }
-					 last_rx_pos = currentRxPos;
-					/// osSemaphoreRelease(uartTxSem); // counting semaphore
-				 }
-        	 }
-         }
+        memset(uart_received_data,0,sizeof(uart_received_data));
+		uart_received_data_size = xStreamBufferReceive(uartRxStream,uart_received_data,sizeof(uart_received_data),portMAX_DELAY);
+		if(uart_received_data_size)
+		 {
+			 processData(&huart2,uart_received_data, uart_received_data_size);
+		 }
+
      }
 }
 
@@ -101,9 +83,7 @@ static void ComTaskTx(void *argument)
 
 static void UART_InitCountingSemaphore(void)
 {
-    const osSemaphoreAttr_t semRxAttr = { .name = "UART_RX_Sem" };
     const osSemaphoreAttr_t semTxAttr = { .name = "UART_TX_Sem" };
-    uartRxSem = osSemaphoreNew(10, 0, &semRxAttr); // max count 10, initial 0
     uartTxSem = osSemaphoreNew(10, 0, &semTxAttr); // max count 10, initial 0
     uartBusySem = osSemaphoreNew(10, 0, &semTxAttr); // max count 10, initial 0
 }
@@ -119,6 +99,7 @@ void Com_Talks_Init(void)
     UART_InitCountingSemaphore();
     // 5️⃣ Timer create
     UART_Timer_Init();
+    uartRxStream = xStreamBufferCreate( UART_RX_DMA_BUF_SIZE, 1);
     /* BSP UART Tasks creat */
     bsp_uart_rx_task_handle = osThreadNew(ComTaskRx, NULL, &BSPUARTTask_attributes);
     bsp_uart_tx_task_handle = osThreadNew(ComTaskTx, NULL, &BSPUARTTask_attributes);
