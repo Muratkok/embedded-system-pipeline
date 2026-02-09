@@ -1,2 +1,2 @@
-../AppCore/App/src/imu_talks.c:27:6:IMU_Task	3
-../AppCore/App/src/imu_talks.c:72:6:IMU_Talks_Init	1
+../AppCore/App/src/imu_talks.c:29:6:IMU_Task	5
+../AppCore/App/src/imu_talks.c:83:6:IMU_Talks_Init	1

@@ -1,2 +1,3 @@
-../AppCore/Drivers/Src/mpu6050_driver.c:12:6:MPU6050_Init	40	static,ignoring_inline_asm
-../AppCore/Drivers/Src/mpu6050_driver.c:30:6:MPU6050_Read	48	static
+../AppCore/Drivers/Src/mpu6050_driver.c:12:6:MPU6050_Init	40	static
+../AppCore/Drivers/Src/mpu6050_driver.c:31:20:MPU6050_Read	48	static
+../AppCore/Drivers/Src/mpu6050_driver.c:51:6:MPU6050_Reset	40	static

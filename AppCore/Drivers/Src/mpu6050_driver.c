@@ -16,22 +16,25 @@ void MPU6050_Init(I2C_HandleTypeDef *hi2c)
     // Wake up
     data = 0x00;
     HAL_I2C_Mem_Write(hi2c, MPU6050_ADDR, MPU6050_PWR_MGMT_1, 1, &data, 1, 100);
-__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();__NOP();
+    vTaskDelay(100);
     // Accel ±2g
     data = 0x00;
     HAL_I2C_Mem_Write(hi2c, MPU6050_ADDR, MPU6050_ACCEL_CFG, 1, &data, 1, 100);
-
+    vTaskDelay(100);
     // Gyro ±250 dps
     data = 0x00;
     HAL_I2C_Mem_Write(hi2c, MPU6050_ADDR, MPU6050_GYRO_CFG, 1, &data, 1, 100);
+    vTaskDelay(100);
 }
 
 
-void MPU6050_Read(I2C_HandleTypeDef *hi2c, MPU6050_Data_t *data)
+HAL_StatusTypeDef  MPU6050_Read(I2C_HandleTypeDef *hi2c, MPU6050_Data_t *data)
 {
     uint8_t buf[14] = {0};
 
-    HAL_I2C_Mem_Read(hi2c, MPU6050_ADDR, MPU6050_DATA_REG, 1, buf, 14, 100);
+    HAL_StatusTypeDef ret = HAL_I2C_Mem_Read(hi2c, MPU6050_ADDR, MPU6050_DATA_REG, 1, buf, 14, 100);
+
+    if(ret != HAL_OK) return ret;
 
     data->ax = (buf[0] << 8) | buf[1];
     data->ay = (buf[2] << 8) | buf[3];
@@ -42,4 +45,12 @@ void MPU6050_Read(I2C_HandleTypeDef *hi2c, MPU6050_Data_t *data)
     data->gz = (buf[12] << 8) | buf[13];
 
     data->timestamp = xTaskGetTickCount();
+    return HAL_OK;
+}
+
+void MPU6050_Reset(I2C_HandleTypeDef *hi2c)
+{
+    uint8_t data = 0x80; // reset bit
+    HAL_I2C_Mem_Write(hi2c, MPU6050_ADDR, MPU6050_PWR_MGMT_1,I2C_MEMADD_SIZE_8BIT,&data, 1, 100);
+    vTaskDelay(100);
 }

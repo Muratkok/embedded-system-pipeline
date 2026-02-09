@@ -58,7 +58,7 @@ static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 
 /* USER CODE BEGIN PFP */
-
+void I2C1_BusRecovery(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/

@@ -10,6 +10,7 @@
 
 
 #include "mpu6050_driver.h"
+#include "main.h"
 
 #pragma pack(push,1)
 typedef struct
@@ -23,7 +24,31 @@ typedef struct {
     float angle;
     float P;
 } KalmanFilter;
+
+typedef struct
+{
+	float rx;
+	float ry;
+	float rz;
+}RStruct;
+
+extern RStruct R;
+
+typedef struct
+{
+	float qx;
+	float qy;
+	float qz;
+}QStruct;
+
+extern QStruct Q;
 #pragma pack(pop)
+#ifdef  CALIBRATION_SENSOR
+#define SAMPLE_COUNT 500
+
+
+void calibrationIMUSensor(void);
+#endif
 
 void  IMU_ComputeRollPitchHeading(const MPU6050_Data_t *raw,IMU_Attitude_t *att);
 void  IMU_Kalman_Init(KalmanFilter *kf, float initAngle);

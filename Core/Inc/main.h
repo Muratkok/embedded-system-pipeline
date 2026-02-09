@@ -132,7 +132,14 @@ void Error_Handler(void);
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
+#define I2C1_SCL_PORT   GPIOB
+#define I2C1_SCL_PIN    GPIO_PIN_6
+
+#define I2C1_SDA_PORT   GPIOB
+#define I2C1_SDA_PIN    GPIO_PIN_9
+
 #define IWDG_ENABLE
+#define CALIBRATION_SENSOR
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

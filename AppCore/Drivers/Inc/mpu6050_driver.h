@@ -29,5 +29,6 @@ typedef struct
 } MPU6050_Data_t;
 
 extern void MPU6050_Init(I2C_HandleTypeDef *hi2c);
-extern void MPU6050_Read(I2C_HandleTypeDef *hi2c, MPU6050_Data_t *data);
+extern HAL_StatusTypeDef  MPU6050_Read(I2C_HandleTypeDef *hi2c, MPU6050_Data_t *data);
+extern void MPU6050_Reset(I2C_HandleTypeDef *hi2c);
 #endif /* DRIVERS_MPU6050_DRIVER_H_ */
